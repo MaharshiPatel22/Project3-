@@ -55,7 +55,7 @@ public class Main extends Application {
         gridPane.setHgap(10);
         gridPane.setPrefSize(400, 400);
         
-        
+        // gridPane 
         gridPane.add(messageLabel,4,4); 
         gridPane.add(doctor,4,5);
         gridPane.add(patient, 4, 6);
@@ -74,6 +74,7 @@ public class Main extends Application {
         patientPortalView.display(stage);
     }
 
+    //switch to doctor scene
     private void switchToDoctorScene(Stage primaryStage) {
     	DoctorsPortal doctorportal= new DoctorsPortal();
     	doctorportal.display(primaryStage);
