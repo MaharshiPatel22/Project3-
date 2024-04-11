@@ -43,8 +43,10 @@ public class DoctorsPortal {
         Tab visitHistoryTab = new Tab("Visit History");
         visitHistoryTab.setContent(new Label("Visit history content goes here."));
         visitHistoryTab.setClosable(false);
-
+        // message portal
         Tab messagePortalTab = new Tab("Message Portal");
+        
+        //message Box
         VBox messageBox = new VBox(10);
         TextArea messageArea = new TextArea();
         messageArea.setPromptText("Type your message here...");
