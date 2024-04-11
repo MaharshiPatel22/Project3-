@@ -3,7 +3,9 @@ package application;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -21,7 +23,6 @@ public class PatientPortal {
         Stage authStage = new Stage();
         authStage.setTitle("Patient Portal - Login or Sign Up");
 
-        // Login and Sign Up Buttons on Main Page
         Button btnLogInPage = new Button("Log In");
         btnLogInPage.setOnAction(e -> showLogInPage(authStage));
 
@@ -80,7 +81,7 @@ public class PatientPortal {
         try {
             savePatientInfo(patientID, firstName.getText(), lastName.getText(), phoneNumber.getText(), email.getText(), emergencyContact.getText());
             showAlert("Sign Up Successful", "Your sign up was successful. Your Patient ID is: " + patientID);
-            showMessagingSystem(stage, patientID);  // Redirect to messaging system after sign up
+            showMessagingSystem(stage, patientID);  
         } catch (IOException e) {
             showAlert("Sign Up Error", "There was an error saving your information. Please try again.");
         }
@@ -94,27 +95,51 @@ public class PatientPortal {
         }
         if (Files.exists(Paths.get(patientID + ".txt"))) {
             showAlert("Login Successful", "You have successfully logged in.");
-            showMessagingSystem(stage, patientID);  // Redirect to messaging system after login
+            showMessagingSystem(stage, patientID); 
         } else {
             showAlert("Login Error", "Invalid Patient ID. Please try again or sign up.");
         }
     }
 
     private void showMessagingSystem(Stage stage, String patientID) {
+        TabPane tabPane = new TabPane();
+
+        Tab messageTab = new Tab("Messages");
         TextArea messageArea = new TextArea();
         messageArea.setPromptText("Enter your message here...");
         Button sendMessageButton = new Button("Send Message");
         sendMessageButton.setOnAction(e -> {
             sendPatientMessage(patientID, messageArea.getText());
-            messageArea.clear(); // Clear the text area after sending the message
+            messageArea.clear(); 
         });
-
         VBox messageBox = new VBox(10, new Label("Message your doctor:"), messageArea, sendMessageButton);
-        messageBox.setAlignment(Pos.CENTER);
+        messageTab.setContent(messageBox);
+        messageTab.setClosable(false);
 
-        Scene scene = new Scene(messageBox, 400, 300);
+        Tab medicalRecordTab = new Tab("Medical Records");
+        TextArea medicalRecordArea = new TextArea();
+        medicalRecordArea.setPromptText("Enter your medical record here...");
+        Button saveRecordButton = new Button("Save Record");
+        saveRecordButton.setOnAction(e -> {
+            saveMedicalRecord(patientID, medicalRecordArea.getText());
+            medicalRecordArea.clear(); 
+        });
+        VBox recordBox = new VBox(10, new Label("Add to your medical records:"), medicalRecordArea, saveRecordButton);
+        medicalRecordTab.setContent(recordBox);
+        medicalRecordTab.setClosable(false);
+
+        Tab visitHistoryTab = new Tab("Visit History");
+        TextArea visitHistoryArea = new TextArea(getVisitHistory(patientID));
+        visitHistoryArea.setEditable(false);
+        VBox visitHistoryBox = new VBox(10, new Label("Your visit history:"), visitHistoryArea);
+        visitHistoryTab.setContent(visitHistoryBox);
+        visitHistoryTab.setClosable(false);
+
+        tabPane.getTabs().addAll(messageTab, medicalRecordTab, visitHistoryTab);
+
+        Scene scene = new Scene(tabPane, 600, 400);
         stage.setScene(scene);
-        stage.setTitle("Patient Messaging System - ID: " + patientID);
+        stage.setTitle("Patient Dashboard - ID: " + patientID);
         stage.show();
     }
 
@@ -135,20 +160,36 @@ public class PatientPortal {
         Files.write(path, content.getBytes());
     }
 
+    private void sendPatientMessage(String patientID, String message) {
+        if (message.isEmpty()) {
+            showAlert("Messaging Error", "Message cannot be empty.");
+            return;
+        }
+        System.out.println("Message from Patient ID " + patientID + ": " + message); // Here you would implement the actual message sending logic
+    }
+
+    private void saveMedicalRecord(String patientID, String record) {
+        try {
+            Files.writeString(Paths.get(patientID + "_records.txt"), record + "\n", StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            showAlert("Record Saved", "Your medical record has been saved successfully.");
+        } catch (IOException e) {
+            showAlert("Error Saving Record", "Failed to save your medical record.");
+        }
+    }
+
+    private String getVisitHistory(String patientID) {
+        try {
+            return Files.readString(Paths.get(patientID + "_visits.txt"));
+        } catch (IOException e) {
+            return "No visit history found.";
+        }
+    }
+
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
-    }
-
-    private void sendPatientMessage(String patientID, String message) {
-        if (message.isEmpty()) {
-            showAlert("Messaging Error", "Message cannot be empty.");
-            return;
-        }
-        System.out.println("Message from Patient ID " + patientID + ": " + message);
-        // Here you would implement the actual message sending logic
     }
 }

@@ -57,7 +57,7 @@ public class DoctorsPortal {
         messagePortalTab.setContent(messageBox);
         messagePortalTab.setClosable(false);
 
-        Tab medicalRecordTab = new Tab("Medical Record");
+        Tab medicalRecordTab = new Tab("Patient Record");
         medicalRecordTab.setContent(new Label("Medical record content goes here."));
         medicalRecordTab.setClosable(false);
 
