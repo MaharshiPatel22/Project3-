@@ -10,22 +10,28 @@ import javafx.stage.Stage;
 public class DoctorsPortal {
 
     public void display(Stage stage) {
+    	
         // Log In Form
         Label lblDoctorID = new Label("Doctor ID:");
+        
+        //textField
         TextField txtDoctorID = new TextField();
-
+        
+        // log in button
         Button btnLogIn = new Button("Log In");
         btnLogIn.setOnAction(e -> handleLogIn(txtDoctorID, stage));
 
         // Layout for Log In
         VBox logInBox = new VBox(10, lblDoctorID, txtDoctorID, btnLogIn);
 
+        //gridpane
         GridPane gridPane = new GridPane();
         gridPane.setAlignment(Pos.CENTER);
         gridPane.setHgap(10);
         gridPane.setVgap(20);
         gridPane.add(logInBox, 0, 0);
-
+        
+        //Scene layout
         Scene scene = new Scene(gridPane, 400, 200);
         stage.setScene(scene);
         stage.show();
