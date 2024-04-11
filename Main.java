@@ -81,10 +81,11 @@ public class Main extends Application {
        
     	
     }
-    
+    // message show
     private void showMessage() {
         System.out.print("Please choose your login identity");
     }
+    // main method
     public static void main(String[] args) {
         launch(args);
     }
